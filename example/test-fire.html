@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    canvas {
+      background: black;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <script src="/js/proton.js"></script>
+  <script src="https://s4.ssl.qhres.com/!ee69cc07/spritejs.min.js"></script>
+  <script src="/js/sprite-extend-proton.js"></script>
+  <script>
+    const {Scene, ProtonRenderer} = spritejs
+    const scene = new Scene('#container', {
+      viewport: [600, 600],
+      resolution: [600, 600],
+    })
+    const layer = scene.layer('fglayer')
+
+    function loadImage() {
+      const image = new Image()
+      image.onload = function (e) {
+        createProton(e.target)
+        tick()
+      }
+      image.src = 'image/fire.png'
+    }
+
+    let proton
+    function createProton(image) {
+      proton = new Proton()
+      const emitter = new Proton.Emitter()
+      emitter.rate = new Proton.Rate(new Proton.Span(5, 13), 0.1)
+
+      emitter.addInitialize(new Proton.Mass(1))
+      emitter.addInitialize(new Proton.Body(image))
+      emitter.addInitialize(new Proton.P(new Proton.CircleZone(300, 500, 10)))
+      emitter.addInitialize(new Proton.Life(5, 7))
+      emitter.addInitialize(new Proton.V(new Proton.Span(2, 3), new Proton.Span(0, 30, true), 'polar'))
+
+      emitter.addBehaviour(new Proton.Scale(1, 0.2))
+      emitter.addBehaviour(new Proton.Alpha(1, 0.2))
+      emitter.emit()
+      proton.addEmitter(emitter)
+
+      layer.context.globalCompositeOperation = 'lighter'
+      const renderer = new ProtonRenderer(layer)
+      // const renderer = new Proton.CanvasRenderer(layer.canvas)
+      proton.addRenderer(renderer)
+    }
+
+    function tick() {
+      requestAnimationFrame(tick)
+      proton.update()
+    }
+
+    loadImage()
+  </script>
+</body>
+</html>
