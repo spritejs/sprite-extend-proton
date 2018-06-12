@@ -17,7 +17,7 @@
 <body>
   <div id="container"></div>
   <script src="/js/proton.js"></script>
-  <script src="https://s4.ssl.qhres.com/!ee69cc07/spritejs.min.js"></script>
+  <script src="https://s4.ssl.qhres.com/!cc4197a7/spritejs.min.js"></script>
   <script src="/js/sprite-extend-proton.js"></script>
   <script>
     const {Scene, ProtonRenderer} = spritejs
@@ -39,7 +39,7 @@
     emitter.addInitialize(new Proton.Velocity(3, Proton.getSpan(0, 360), 'polar'))
 
     // add Behaviour
-    emitter.addBehaviour(new Proton.Color('ff0000', 'random'))
+    emitter.addBehaviour(new Proton.Color('#ff0000', 'random'))
     emitter.addBehaviour(new Proton.Alpha(1, 0))
 
     // set emitter position
