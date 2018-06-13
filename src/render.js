@@ -1,9 +1,11 @@
 import {CustomRenderer} from 'proton-js'
-import {Sprite} from 'sprite-core'
+import Particle from './particle'
+import TexturedParticle from './textured-particle'
 
 export default class extends CustomRenderer {
-  constructor(element) {
+  constructor(element, attrs = {}) {
     super(element)
+    this.attrs = attrs
     this.name = 'SpriteRender'
   }
   resize(width, height) {
@@ -12,26 +14,34 @@ export default class extends CustomRenderer {
       this.element.parent.resolution = [width, height]
     }
   }
+  onProtonUpdate() {
+    this.element.draw()
+  }
   createParticle(particle) {
-    const s = new Sprite()
+    let s
     if(particle.body) {
+      s = new TexturedParticle()
       s.textures = particle.body
     } else {
+      s = new Particle()
       const r = particle.radius
       s.attr({
-        bgcolor: particle.color || '#FF0000',
-        size: [r * 2, r * 2],
-        borderRadius: r,
+        r,
       })
     }
-    s.attr({
+
+    if(particle.color) {
+      s.attr({color: particle.color})
+    }
+
+    s.attr(Object.assign(this.attrs, {
       name: 'proton-particles',
       anchor: 0.5,
       pos: [particle.p.x, particle.p.y],
       opacity: particle.alpha,
       scale: [particle.scale, particle.scale],
       rotate: particle.rotation,
-    })
+    }))
     return s
   }
   onParticleCreated(particle) {
@@ -42,14 +52,13 @@ export default class extends CustomRenderer {
   onParticleUpdate(particle) {
     const s = particle.body
 
-    if(particle.transform.rgb && (!s.textures.length)) {
+    if(particle.transform.rgb && !s.textures) {
       const {r, g, b} = particle.transform.rgb
-      const bgcolor = `rgba(${r}, ${g}, ${b}, ${particle.alpha})`
-      s.attr({bgcolor})
-    } else {
-      s.attr({opacity: particle.alpha})
+      const color = `rgb(${r}, ${g}, ${b})`
+      s.attr({color})
     }
     s.attr({
+      opacity: particle.alpha,
       pos: [particle.p.x, particle.p.y],
       scale: [particle.scale, particle.scale],
       rotate: particle.rotation,
