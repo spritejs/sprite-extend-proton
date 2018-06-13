@@ -56,7 +56,7 @@
       emitter.emit()
       proton.addEmitter(emitter)
 
-      layer.context.globalCompositeOperation = 'lighter'
+      layer.context.globalCompositeOperation = 'screen'
       const renderer = new ProtonRenderer(layer)
       // const renderer = new Proton.CanvasRenderer(layer.canvas)
       proton.addRenderer(renderer)
