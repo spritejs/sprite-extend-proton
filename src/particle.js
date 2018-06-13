@@ -17,6 +17,17 @@ class Particle extends BaseSprite {
     }
     return false
   }
+  draw(t, drawingContext = this.context) {
+    const [x, y] = this.attr('pos')
+    drawingContext.save()
+    drawingContext.translate(x, y)
+    drawingContext.transform(...this.transform.m)
+    drawingContext.globalAlpha *= this.attr('opacity')
+    const [ox, oy] = this.originalRect
+    drawingContext.translate(ox, oy)
+    this.render(t, drawingContext)
+    drawingContext.restore()
+  }
   render(t, drawingContext) {
     const color = this.attr('color')
     drawingContext.fillStyle = color

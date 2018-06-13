@@ -2,21 +2,20 @@ import {Sprite} from 'sprite-core'
 import {parseColorString} from 'sprite-utils'
 
 class TexturedParticle extends Sprite {
-  constructor(attr) {
-    super(attr)
-    this.__cachePolicyThreshold = Infinity
+  draw(t, drawingContext = this.context) {
+    const [x, y] = this.attr('pos')
+    drawingContext.save()
+    drawingContext.translate(x, y)
+    drawingContext.transform(...this.transform.m)
+    drawingContext.globalAlpha *= this.attr('opacity')
+    const [ox, oy] = this.originalRect
+    drawingContext.translate(ox, oy)
+    this.render(t, drawingContext)
+    drawingContext.restore()
   }
   render(t, drawingContext) {
-    const color = this.attr('color')
-    if(color) {
-      drawingContext.fillStyle = color
-      const rect = [0, 0, ...this.clientSize]
-      drawingContext.fillRect(...rect)
-    }
-
     const textures = this.textures
     if(this.images) {
-      drawingContext.save()
       textures.forEach((texture, i) => {
         const img = this.images[i]
         const rect = texture.rect || [0, 0, ...this.innerSize]
@@ -28,7 +27,6 @@ class TexturedParticle extends Sprite {
           drawingContext.drawImage(img, ...rect)
         }
       })
-      drawingContext.restore()
     }
 
     return drawingContext
