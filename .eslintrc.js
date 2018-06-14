@@ -2,6 +2,7 @@ module.exports = {
   globals: {
     spritejs: true,
     Proton: true,
+    _: 'lodash',
   },
   extends:  "eslint-config-75team",
   plugins: ["html"],

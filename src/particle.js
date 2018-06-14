@@ -1,8 +1,11 @@
-import {BaseSprite} from 'sprite-core'
+import {Sprite, registerNodeType} from 'sprite-core'
 import {parseColorString} from 'sprite-utils'
 
-class Particle extends BaseSprite {
+class Particle extends Sprite {
   get contentSize() {
+    if(this.textures.length) {
+      return super.contentSize
+    }
     const d = this.attr('r') * 2
     return [d, d]
   }
@@ -29,41 +32,40 @@ class Particle extends BaseSprite {
     drawingContext.restore()
   }
   render(t, drawingContext) {
-    const color = this.attr('color')
-    drawingContext.fillStyle = color
-
-    const r = this.attr('r'),
-      stroke = this.attr('stroke')
-
-    // draw circle
-    drawingContext.beginPath()
-    drawingContext.arc(r, r, r, 0, Math.PI * 2, true)
-
-    if(stroke) {
-      drawingContext.strokeStyle = this.stroke.color
-      drawingContext.lineWidth = this.stroke.thinkness
-      drawingContext.stroke()
-    }
-
-    drawingContext.closePath()
-    drawingContext.fill()
-
     const textures = this.textures
-    if(this.images) {
-      drawingContext.save()
-      drawingContext.globalCompositeOperation = 'source-over'
-      textures.forEach((texture, i) => {
-        const img = this.images[i]
-        const rect = texture.rect || [0, 0, ...this.innerSize]
-        const srcRect = texture.srcRect
+    if(textures.length) {
+      if(this.images) {
+        textures.forEach((texture, i) => {
+          const img = this.images[i]
+          const rect = texture.rect || [0, 0, ...this.innerSize]
+          const srcRect = texture.srcRect
 
-        if(srcRect) {
-          drawingContext.drawImage(img, ...srcRect, ...rect)
-        } else {
-          drawingContext.drawImage(img, ...rect)
-        }
-      })
-      drawingContext.restore()
+          if(srcRect) {
+            drawingContext.drawImage(img, ...srcRect, ...rect)
+          } else {
+            drawingContext.drawImage(img, ...rect)
+          }
+        })
+      }
+    } else {
+      const color = this.attr('color')
+      drawingContext.fillStyle = color
+
+      const r = this.attr('r'),
+        stroke = this.attr('stroke')
+
+      // draw circle
+      drawingContext.beginPath()
+      drawingContext.arc(r, r, r, 0, Math.PI * 2, true)
+
+      if(stroke) {
+        drawingContext.strokeStyle = this.stroke.color
+        drawingContext.lineWidth = this.stroke.thinkness
+        drawingContext.stroke()
+      }
+
+      drawingContext.closePath()
+      drawingContext.fill()
     }
 
     return drawingContext
@@ -92,4 +94,5 @@ Particle.defineAttributes({
   },
 })
 
+registerNodeType('proton', Particle)
 export default Particle

@@ -1,6 +1,5 @@
 import {CustomRenderer} from 'proton-js'
 import Particle from './particle'
-import TexturedParticle from './textured-particle'
 
 export default class extends CustomRenderer {
   constructor(element, attrs = {}) {
@@ -18,12 +17,10 @@ export default class extends CustomRenderer {
     this.element.draw()
   }
   createParticle(particle) {
-    let s
+    const s = new Particle()
     if(particle.body) {
-      s = new TexturedParticle()
       s.textures = particle.body
     } else {
-      s = new Particle()
       const r = particle.radius
       s.attr({
         r,
@@ -52,7 +49,7 @@ export default class extends CustomRenderer {
   onParticleUpdate(particle) {
     const s = particle.body
 
-    if(particle.transform.rgb && !s.textures) {
+    if(particle.transform.rgb && s.textures.length === 0) {
       const {r, g, b} = particle.transform.rgb
       const color = `rgb(${r}, ${g}, ${b})`
       s.attr({color})
