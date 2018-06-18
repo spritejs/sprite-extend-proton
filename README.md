@@ -33,7 +33,7 @@ This is a spritejs extension for [proton-js](https://github.com/a-jie/Proton).
     emitter.addInitialize(new Proton.Velocity(3, Proton.getSpan(0, 360), 'polar'))
 
     // add Behaviour
-    emitter.addBehaviour(new Proton.Color('ff0000', 'random'))
+    emitter.addBehaviour(new Proton.Color('#ff0000', 'random'))
     emitter.addBehaviour(new Proton.Alpha(1, 0))
 
     // set emitter position
