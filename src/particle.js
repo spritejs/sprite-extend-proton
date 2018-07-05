@@ -76,20 +76,17 @@ Particle.defineAttributes({
   init(attr) {
     attr.setDefault({
       r: 0,
-      color: parseColorString('red'),
-      stroke: null,
+      color: 'rgba(255,0,0,1)',
+      stroke: null, // {color, thinkness}
     })
   },
   color(attr, val) {
-    attr.clearCache()
     attr.set('color', parseColorString(val))
   },
   stroke(attr, val) {
-    attr.clearCache()
     attr.set('stroke', val)
   },
   r(attr, val) {
-    attr.clearCache()
     attr.set('r', val)
   },
 })

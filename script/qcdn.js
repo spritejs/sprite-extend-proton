@@ -9,10 +9,10 @@ try {
     keepName: true,
   }).then((res) => {
     console.log('file uploaded, CDN URL: %s', res[file])
-    let readmeFile = path.resolve(__dirname, '..', 'README.md')
-    let content = fs.readFileSync(readmeFile, 'utf-8')
-    content = content.replace(/script src="(.*?)sprite-extend-proton.js"/igm, `script src="${res[file]}"`)
-    fs.writeFileSync(readmeFile, content)
+    // let readmeFile = path.resolve(__dirname, '..', 'README.md')
+    // let content = fs.readFileSync(readmeFile, 'utf-8')
+    // content = content.replace(/script src="(.*?)sprite-extend-proton.js"/igm, `script src="${res[file]}"`)
+    // fs.writeFileSync(readmeFile, content)
   })
 } catch (ex) {
   return Promise.reject(new Error('no cdn uploader specified!'))
