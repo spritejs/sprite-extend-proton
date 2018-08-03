@@ -1,7 +1,8 @@
-import {Sprite, registerNodeType} from 'sprite-core'
-import {parseColorString} from 'sprite-utils'
+import {Sprite, registerNodeType, utils} from 'sprite-core'
 
+const {parseColorString, flow} = utils
 class Particle extends Sprite {
+  @flow
   get contentSize() {
     if(this.textures.length) {
       return super.contentSize
@@ -87,6 +88,7 @@ Particle.defineAttributes({
     attr.set('stroke', val)
   },
   r(attr, val) {
+    attr.clearFlow()
     attr.set('r', val)
   },
 })

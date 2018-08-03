@@ -28,25 +28,19 @@
 </head>
 
 <body>
-    <div id="container">
-    </div>
+    <canvas id="container" width="800" height="800"></canvas>
     <script src="/js/proton.js"></script>
     <script src="/js/Stats.min.js"></script>
     <script src="/js/color.min.js"></script>
-    <!-- <script src="https://s1.ssl.qhres.com/!61a9a5c9/spritejs.min.js"></script> -->
-    <script src="/js/spritejs.js"></script>
+    <script src="https://s2.ssl.qhres.com/!f04b3f6f/sprite-core.min.js"></script>
+    <!-- <script src="https://unpkg.com/spritejs/dist/spritejs.min.js"></script> -->
+    <!-- <script src="/js/spritejs.js"></script> -->
     <script src="/js/sprite-extend-proton.js"></script>
     <script>
-      const {Scene, ProtonRenderer} = spritejs
-      const scene = new Scene('#container', {
-        viewport: ['auto', 'auto'],
-      })
-      const layer = scene.layer('fglayer', {
-        // handleEvent: false,
-        shadowContext: false,
-        autoRender: false,
-      })
+      const {Layer, ProtonRenderer} = spritejs,
+        context = document.getElementById('container').getContext('2d')
 
+      const layer = new Layer({context, autoRender: false})
       /* eslint-disable */
         var proton;
         var emitter;
@@ -87,8 +81,8 @@
             emitter.addBehaviour(colorBehaviour);
             emitter.addBehaviour(circleBehaviour);
             _currentBehaviour = circleBehaviour;
-            emitter.p.x = scene.resolution[0] / 2;
-            emitter.p.y = scene.resolution[1] / 2;
+            emitter.p.x = layer.canvas.width / 2;
+            emitter.p.y = layer.canvas.height / 2;
             emitter.emit();
             proton.addEmitter(emitter);
             setInterval(function() {
@@ -105,7 +99,7 @@
             emitter.addInitialize(new Proton.Mass(1));
             emitter.addInitialize(new Proton.Radius(10, 30));
             emitter.addInitialize(new Proton.Life(2, 4));
-            emitter.addInitialize(new Proton.Position(new Proton.RectZone(0, 0, ...scene.resolution)));
+            emitter.addInitialize(new Proton.Position(new Proton.RectZone(0, 0, layer.canvas.width, layer.canvas.height)));
             emitter.addBehaviour(new Proton.Alpha(0, .4, Infinity, Proton.easeOutCubic));
             emitter.addBehaviour(new Proton.Scale(1, 0, Infinity, Proton.easeOutCubic));
             emitter.addBehaviour(new Proton.Color('random'));
@@ -115,9 +109,9 @@
         function createRender() {
             const _clearContext = layer.clearContext
             layer.clearContext = function(context) {
-              const [width, height, offsetLeft, offsetTop] = this.resolution
+              const {width, height} = this.canvas
               context.fillStyle = "rgba(0, 0, 0, 0.03)";
-              context.fillRect(offsetLeft, offsetTop, width, height);
+              context.fillRect(0, 0, width, height);
             }
             var renderer = new ProtonRenderer(layer);
             return renderer;

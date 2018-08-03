@@ -18,25 +18,30 @@
   </style>
 </head>
 <body>
-  <div id="container"></div>
+  <canvas id="container" width="800" height="800"></canvas>
   <script src="/js/proton.js"></script>
-  <!-- <script src="https://s1.ssl.qhres.com/!61a9a5c9/spritejs.min.js"></script> -->
-  <script src="/js/spritejs.js"></script>
+  <script src="https://s2.ssl.qhres.com/!f04b3f6f/sprite-core.min.js"></script>
+  <!-- <script src="/js/spritejs.js"></script> -->
   <script src="/js/sprite-extend-proton.js"></script>
   <script>
   (async function () {
-    const {Scene, ProtonRenderer} = spritejs
-    const scene = new Scene('#container', {
-      viewport: [600, 600],
-      resolution: [600, 600],
-    })
-    const layer = scene.layer('fglayer', {
-      handleEvent: false,
-      autoRender: false,
-      shadowContext: false,
-    })
+    const {Layer, ProtonRenderer} = spritejs,
+      context = document.getElementById('container').getContext('2d')
 
-    await scene.preload({id: 'fire', src: 'image/fire.png'})
+    const layer = new Layer({context, autoRender: false})
+
+    function loadImage(src) {
+      const image = new Image()
+      const promise = new Promise((resolve) => {
+        image.onload = function (e) {
+          resolve(e.target)
+        }
+      })
+
+      image.src = src
+      return promise
+    }
+    const image = await loadImage('image/fire.png')
 
     function createProton() {
       const proton = new Proton()
@@ -44,7 +49,7 @@
       emitter.rate = new Proton.Rate(new Proton.Span(5, 13), 0.1)
 
       emitter.addInitialize(new Proton.Mass(1))
-      emitter.addInitialize(new Proton.Body('fire'))
+      emitter.addInitialize(new Proton.Body(image))
       emitter.addInitialize(new Proton.P(new Proton.CircleZone(300, 500, 10)))
       emitter.addInitialize(new Proton.Life(5, 7))
       emitter.addInitialize(new Proton.V(new Proton.Span(2, 3), new Proton.Span(0, 30, true), 'polar'))
