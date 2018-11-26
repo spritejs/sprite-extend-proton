@@ -1,4 +1,12 @@
 // for webpack build
-import Renderer from './render'
+import RendererPlugin from './render'
 
-module.exports = Renderer
+// auto use
+if(typeof window !== 'undefined' && window.spritejs) {
+  window.spritejs.use(install)
+}
+
+export default function install(spritejs) {
+  const ret = {ProtonRenderer: spritejs.use(RendererPlugin, null, false)}
+  return ret
+}
