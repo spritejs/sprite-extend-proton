@@ -14,7 +14,7 @@ function setCloudPartice(cloud, particle) {
 
   let scale = particle.scale;
   if(particle.radius) {
-    scale = particle.radius / particle.body.attributes.radius;
+    scale *= particle.radius / particle.body.attributes.radius;
   }
   cloud.scale(idx, [scale, scale], [particle.p.x, particle.p.y]);
   cloud.rotate(idx, particle.rotation, [particle.p.x, particle.p.y]);
