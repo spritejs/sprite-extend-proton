@@ -1,5 +1,5 @@
 import {CustomRenderer} from 'proton-js';
-import {Sprite, Cloud} from 'spritejs';
+import {Sprite, Arc, Cloud} from 'spritejs';
 
 function setCloudPartice(cloud, particle) {
   const idx = particle.idx;
@@ -11,7 +11,12 @@ function setCloudPartice(cloud, particle) {
   }
   cloud.opacity(idx, particle.alpha);
   cloud.translate(idx, [particle.p.x, particle.p.y]);
-  cloud.scale(idx, [particle.scale, particle.scale], [particle.p.x, particle.p.y]);
+
+  let scale = particle.scale;
+  if(particle.radius) {
+    scale = particle.radius / particle.body.attributes.radius;
+  }
+  cloud.scale(idx, [scale, scale], [particle.p.x, particle.p.y]);
   cloud.rotate(idx, particle.rotation, [particle.p.x, particle.p.y]);
 }
 
@@ -64,59 +69,37 @@ export default class Render extends CustomRenderer {
 
   onParticleCreated(particle) {
     if(!particle.body) {
-      const node = this.createParticle(particle);
+      const node = new Arc({radius: 100});
       particle.body = node;
-      this.element.append(node);
-    } else {
-      const node = particle.body;
-      if(!this.cloud) {
-        this.cloud = new Cloud(node);
-        this._particles = [];
-        this.element.append(this.cloud);
-      } else {
-        this.cloud.amount++;
-      }
-      const idx = this.cloud.amount - 1;
-      particle.idx = idx;
-      setCloudPartice(this.cloud, particle);
-      this._particles.push(particle);
     }
+
+    const node = particle.body;
+    if(!this.cloud) {
+      this.cloud = new Cloud(node);
+      this._particles = [];
+      this.element.append(this.cloud);
+    } else {
+      this.cloud.amount++;
+    }
+    const idx = this.cloud.amount - 1;
+    particle.idx = idx;
+    setCloudPartice(this.cloud, particle);
+    this._particles.push(particle);
   }
 
   onParticleUpdate(particle) {
-    if(!this.cloud) {
-      const node = particle.body;
-
-      if(particle.rgb) {
-        const {r, g, b} = particle.rgb;
-        node.attributes.bgcolor = [r, g, b, particle.alpha];
-      }
-
-      node.attr({
-        pos: [particle.p.x, particle.p.y],
-        scale: [particle.scale, particle.scale],
-        rotate: particle.rotation,
-      });
-    } else {
-      setCloudPartice(this.cloud, particle);
-    }
+    setCloudPartice(this.cloud, particle);
   }
 
   onParticleDead(particle) {
-    if(!this.cloud) {
-      const node = particle.body;
-      node.remove();
-      particle.body = null;
-    } else {
-      const idx = particle.idx;
-      const particles = this._particles;
-      for(let i = idx + 1; i < particles.length; i++) {
-        const p = particles[i];
-        p.idx--;
-        particles[i - 1] = p;
-      }
-      particles.pop();
-      this.cloud.delete(idx);
+    const idx = particle.idx;
+    const particles = this._particles;
+    for(let i = idx + 1; i < particles.length; i++) {
+      const p = particles[i];
+      p.idx--;
+      particles[i - 1] = p;
     }
+    particles.pop();
+    this.cloud.delete(idx);
   }
 }
