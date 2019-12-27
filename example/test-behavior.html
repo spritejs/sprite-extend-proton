@@ -24,22 +24,40 @@
         .shadow {
             box-shadow: 0 0 10px #000;
         }
+
+        #container {
+            width: 800px;
+            height: 800px;
+        }
     </style>
 </head>
 
 <body>
-    <canvas id="container" width="800" height="800"></canvas>
+    <div id="container"></div>
     <script src="/js/proton.js"></script>
-    <script src="/js/Stats.min.js"></script>
+    <script src="/js/stats.min.js"></script>
     <script src="/js/color.min.js"></script>
-    <script src="https://unpkg.com/spritejs/dist/spritejs.min.js"></script>
-    <!-- <script src="/js/spritejs.js"></script> -->
+    <!-- <script src="https://unpkg.com/spritejs/dist/spritejs.min.js"></script> -->
+    <script src="/js/spritejs.js"></script>
     <script src="/js/sprite-extend-proton.js"></script>
     <script>
-      const {Layer, ProtonRenderer} = spritejs,
-        context = document.getElementById('container').getContext('2d')
+      const {Scene, Block, ProtonRenderer} = spritejs;
+      const container = document.getElementById('container');
+      const scene = new Scene({
+        container,
+        autoRender: false,
+        handleEvent: false,
+        preserveDrawingBuffer: true,
+      });
 
-      const layer = new Layer({context, autoRender: false})
+      const layer = scene.layer();
+
+      const mask = new Block();
+      mask.setResolution(layer.getResolution());
+      mask.attributes.width = layer.width;
+      mask.attributes.height = layer.height;
+      mask.attributes.bgcolor = 'rgba(0, 0, 0, 0.03)';
+
       /* eslint-disable */
         var proton;
         var emitter;
@@ -105,26 +123,19 @@
             emitter.emit();
             return emitter;
         }
+
+        // console.log(mask.draw());
         function createRender() {
-            const _clearContext = layer.clearContext
-            layer.clearContext = function(context) {
-              const {width, height} = this.canvas
-              context.fillStyle = "rgba(0, 0, 0, 0.03)";
-              context.fillRect(0, 0, width, height);
-            }
             var renderer = new ProtonRenderer(layer);
+            renderer.onProtonUpdate = function() {
+                // context.fillStyle = "rgba(0, 0, 0, 0.03)";
+                // context.fillRect(0, 0, canvas.width, canvas.height);
+                layer.renderer.drawMeshes(mask.draw());
+                layer.render({clear: false});
+            };
             return renderer;
         }
-        // function createRender() {
-        //     const canvas = layer.canvas,
-        //       context = canvas.getContext('2d')
-        //     var renderer = new Proton.CanvasRenderer(canvas);
-        //     renderer.onProtonUpdate = function() {
-        //         context.fillStyle = "rgba(0, 0, 0, 0.03)";
-        //         context.fillRect(0, 0, canvas.width, canvas.height);
-        //     };
-        //     return renderer;
-        // }
+
         function customCircleBehaviour() {
             circleBehaviour = {
                 dead: false,

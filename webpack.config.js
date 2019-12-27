@@ -1,19 +1,19 @@
-const path = require('path')
-const fs = require('fs')
+const path = require('path');
+const fs = require('fs');
 
-let babelConf
+let babelConf;
 if(fs.existsSync('./.babelrc')) {
   // use babel
-  babelConf = JSON.parse(fs.readFileSync('.babelrc'))
+  babelConf = JSON.parse(fs.readFileSync('.babelrc'));
 }
 
 module.exports = function (env = {}) {
-  const externals = {}
-  let filename = 'sprite-extend-proton.standalone.js'
+  const externals = {};
+  let filename = 'sprite-extend-proton.standalone.js';
   if(!env.standalone) {
-    externals['proton-js'] = 'Proton'
-    externals['sprite-core'] = 'spritejs'
-    filename = 'sprite-extend-proton.js'
+    externals['proton-js'] = 'Proton';
+    externals.spritejs = 'spritejs';
+    filename = 'sprite-extend-proton.js';
   }
 
   return {
@@ -23,8 +23,9 @@ module.exports = function (env = {}) {
       path: path.resolve(__dirname, 'dist'),
       filename,
       publicPath: '/js/',
-      library: ['spriteProton'],
+      library: ['spritejs', 'ProtonRenderer'],
       libraryTarget: 'umd',
+      libraryExport: 'default',
     },
     // resolve: {
     //   aliasFields: ['wxapp'],
@@ -65,5 +66,5 @@ module.exports = function (env = {}) {
 
 
     /* Advanced configuration (click to show) */
-  }
-}
+  };
+};

@@ -25,7 +25,7 @@
   <script src="/js/spritejs.js"></script>
   <script src="/js/sprite-extend-proton.js"></script>
   <script>
-    const {Scene, ProtonRenderer} = spritejs;
+    const {Scene, Block, ProtonRenderer} = spritejs;
     const container = document.getElementById('container');
 
     const scene = new Scene({
@@ -34,7 +34,7 @@
       height: 600,
     });
 
-    const layer = scene.layer('fglayer', {autoRender: false, handleEvent: false});
+    const layer = scene.layer('fglayer', {autoRender: false});
 
     const proton = new Proton();
     const emitter = new Proton.Emitter();
@@ -43,12 +43,18 @@
     emitter.rate = new Proton.Rate(Proton.getSpan(10, 20), 0.1);
 
     // add Initialize
-    emitter.addInitialize(new Proton.Radius(1, 12));
+    const block = new Block({
+      size: [20, 20],
+      bgcolor: 'red',
+    });
+    emitter.addInitialize(new Proton.Body(block));
+    // emitter.addInitialize(new Proton.Radius(1, 12));
     emitter.addInitialize(new Proton.Life(2, 4));
     emitter.addInitialize(new Proton.Velocity(3, Proton.getSpan(0, 360), 'polar'));
 
     // add Behaviour
     emitter.addBehaviour(new Proton.Color('#ff0000', 'random'));
+    emitter.addBehaviour(new Proton.Scale(1, 0));
     emitter.addBehaviour(new Proton.Alpha(1, 0));
 
     // set emitter position
