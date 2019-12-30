@@ -61,3 +61,11 @@ This is a spritejs extension for [proton-js](https://github.com/a-jie/Proton).
     tick()
 </script>
 ```
+
+## for SpriteJS v2
+
+The previous version (v0.5.0) is for SpriteJS v2.
+
+```html
+<script src="https://unpkg.com/sprite-extend-proton@0.5.0/dist/sprite-extend-proton.js"></script>
+```
