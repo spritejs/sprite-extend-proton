@@ -1,11 +1,11 @@
 import {CustomRenderer} from 'proton-js';
-import {Sprite, Arc, Cloud} from 'spritejs';
+import {Arc, Cloud} from 'spritejs';
 
 function setCloudPartice(cloud, particle) {
   const idx = particle.idx;
   cloud.setTransform(idx, null);
   cloud.setColorTransform(idx, null);
-  if(particle.rgb) {
+  if(particle.color) {
     const {r, g, b} = particle.rgb;
     cloud.setFillColor(idx, [r, g, b, 1]);
   }
@@ -13,8 +13,9 @@ function setCloudPartice(cloud, particle) {
   cloud.translate(idx, [particle.p.x, particle.p.y]);
 
   let scale = particle.scale;
-  if(particle.radius) {
-    scale *= particle.radius / particle.body.attributes.radius;
+  const bodyRadius = particle.body.attributes.radius;
+  if(particle.radius && bodyRadius) {
+    scale *= particle.radius / bodyRadius;
   }
   cloud.scale(idx, [scale, scale], [particle.p.x, particle.p.y]);
   cloud.rotate(idx, particle.rotation, [particle.p.x, particle.p.y]);
@@ -35,36 +36,7 @@ export default class Render extends CustomRenderer {
   }
 
   onProtonUpdate() {
-    // console.log(this.element.children.length);
     this.element.render();
-  }
-
-  createParticle(particle) {
-    const node = new Sprite();
-    const radius = particle.radius;
-    node.attributes.width = radius * 2;
-    node.attributes.height = radius * 2;
-    node.attributes.borderRadius = radius;
-
-    if(particle.rgb) {
-      const {r, g, b} = particle.rgb;
-      node.attributes.bgcolor = [r, g, b, particle.alpha];
-    }
-
-    if(particle.alpha) {
-      node.attributes.opacity = particle.alpha;
-    }
-
-    node.attr(Object.assign(this.attrs, {
-      id: particle.id,
-      name: particle.name,
-      anchor: 0.5,
-      pos: [particle.p.x, particle.p.y],
-      scale: [particle.scale, particle.scale],
-      rotate: particle.rotation,
-    }));
-
-    return node;
   }
 
   onParticleCreated(particle) {

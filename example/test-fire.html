@@ -15,70 +15,86 @@
     canvas {
       background: black;
     }
+    #container {
+      width: 800px;
+      height: 800px;
+    }
   </style>
 </head>
 <body>
-  <canvas id="container" width="800" height="800"></canvas>
+  <div id="container"></div>
   <script src="/js/proton.js"></script>
   <!-- <script src="https://s1.ssl.qhres.com/!d1021932/sprite-core.min.js"></script> -->
-  <script src="https://unpkg.com/spritejs/dist/spritejs.min.js"></script>
-  <!-- <script src="/js/spritejs.js"></script> -->
+  <!-- <script src="https://unpkg.com/spritejs/dist/spritejs.min.js"></script> -->
+  <script src="/js/spritejs.js"></script>
   <script src="/js/sprite-extend-proton.js"></script>
   <script>
   (async function () {
-    const {Layer, ProtonRenderer} = spritejs,
-      context = document.getElementById('container').getContext('2d')
+    const {Scene, Sprite, Cloud, ProtonRenderer} = spritejs;
+    const container = document.getElementById('container');
 
-    const layer = new Layer({context, autoRender: false})
+    const scene = new Scene({
+      container,
+      autoRender: false,
+      handleEvent: false,
+      preserveDrawingBuffer: true,
+    });
+
+    const layer = scene.layer();
 
     function loadImage(src) {
-      const image = new Image()
+      const image = new Image();
       const promise = new Promise((resolve) => {
         image.onload = function (e) {
-          resolve(e.target)
-        }
-      })
+          resolve(e.target);
+        };
+      });
 
-      image.src = src
-      return promise
+      image.src = src;
+      return promise;
     }
-    const image = await loadImage('image/fire.png')
+    const image = await loadImage('image/fire.png');
+
+    const sprite = new Sprite({
+      texture: image,
+    });
+
+    const gl = layer.renderer.glRenderer.gl;
+    gl.blendFunc(gl.ONE, gl.ONE);
 
     function createProton() {
-      const proton = new Proton()
-      const emitter = new Proton.Emitter()
-      emitter.rate = new Proton.Rate(new Proton.Span(5, 13), 0.1)
+      const proton = new Proton();
+      const emitter = new Proton.Emitter();
+      emitter.rate = new Proton.Rate(new Proton.Span(5, 13), 0.1);
 
-      emitter.addInitialize(new Proton.Mass(1))
-      emitter.addInitialize(new Proton.Body(image))
-      emitter.addInitialize(new Proton.P(new Proton.CircleZone(300, 500, 10)))
-      emitter.addInitialize(new Proton.Life(5, 7))
-      emitter.addInitialize(new Proton.V(new Proton.Span(2, 3), new Proton.Span(0, 30, true), 'polar'))
+      emitter.addInitialize(new Proton.Mass(1));
+      emitter.addInitialize(new Proton.Body(sprite));
+      emitter.addInitialize(new Proton.P(new Proton.CircleZone(300, 500, 10)));
+      emitter.addInitialize(new Proton.Life(5, 7));
+      emitter.addInitialize(new Proton.V(new Proton.Span(2, 3), new Proton.Span(0, 30, true), 'polar'));
 
-      emitter.addBehaviour(new Proton.Scale(1, 0.2))
-      emitter.addBehaviour(new Proton.Alpha(1, 0.2))
+      emitter.addBehaviour(new Proton.Scale(1, 0.2));
+      emitter.addBehaviour(new Proton.Alpha(1, 0.2));
 
       // emitter.addBehaviour(new Proton.Color('#ff0000'))
 
-      emitter.emit()
-      proton.addEmitter(emitter)
+      emitter.emit();
+      proton.addEmitter(emitter);
 
-      layer.context.globalCompositeOperation = 'screen'
-      const renderer = new ProtonRenderer(layer)
-      // const renderer = new Proton.CanvasRenderer(layer.canvas)
-      proton.addRenderer(renderer)
-      return proton
+      const renderer = new ProtonRenderer(layer);
+      proton.addRenderer(renderer);
+      return proton;
     }
   
-    const proton = createProton()
+    const proton = createProton();
 
     function tick() {
-      requestAnimationFrame(tick)
-      proton.update()
+      requestAnimationFrame(tick);
+      proton.update();
     }
-    tick()
-    window.layer = layer
-  }())
+    tick();
+    window.layer = layer;
+  }());
   </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 This is a spritejs extension for [proton-js](https://github.com/a-jie/Proton).
 
 ```html
-<script src="https://s5.ssl.qhres.com/!37e96b9a/sprite-extend-proton.js"></script>
+<script src="https://unpkg.com/sprite-extend-proton/dist/sprite-extend-proton.js"></script>
 ```
 
 ## Quick Start
@@ -15,9 +15,12 @@ This is a spritejs extension for [proton-js](https://github.com/a-jie/Proton).
 <script src="https://unpkg.com/sprite-extend-proton/dist/sprite-extend-proton.js"></script>
 <script>
     const {Scene, ProtonRenderer} = spritejs
-    const scene = new Scene('#container', {
-      viewport: [600, 600],
-      resolution: [600, 600],
+    const container = document.getElementById('container');
+
+    const scene = new Scene({
+      container,
+      width: 600,
+      height: 600,
     })
     const layer = scene.layer('fglayer')
 
