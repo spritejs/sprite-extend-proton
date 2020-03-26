@@ -1,15 +1,14 @@
 import {CustomRenderer} from 'proton-js';
 import {Arc, Cloud} from 'spritejs';
 
-function setCloudPartice(cloud, particle) {
-  const idx = particle.idx;
+function setCloudPartice(idx, cloud, particle) {
   cloud.setTransform(idx, null);
   cloud.setColorTransform(idx, null);
   if(particle.color) {
     const {r, g, b} = particle.rgb;
     cloud.setFillColor(idx, [r, g, b, 1]);
   }
-  cloud.opacity(idx, particle.alpha);
+  cloud.setOpacity(idx, particle.alpha);
   cloud.translate(idx, [particle.p.x, particle.p.y]);
 
   let scale = particle.scale;
@@ -54,24 +53,19 @@ export default class Render extends CustomRenderer {
       this.cloud.amount++;
     }
     const idx = this.cloud.amount - 1;
-    particle.idx = idx;
-    setCloudPartice(this.cloud, particle);
+    // particle.idx = idx;
+    setCloudPartice(idx, this.cloud, particle);
     this._particles.push(particle);
   }
 
   onParticleUpdate(particle) {
-    setCloudPartice(this.cloud, particle);
+    const idx = this._particles.indexOf(particle);
+    setCloudPartice(idx, this.cloud, particle);
   }
 
   onParticleDead(particle) {
-    const idx = particle.idx;
-    const particles = this._particles;
-    for(let i = idx + 1; i < particles.length; i++) {
-      const p = particles[i];
-      p.idx--;
-      particles[i - 1] = p;
-    }
-    particles.pop();
+    const idx = this._particles.indexOf(particle);
+    this._particles.splice(idx, 1);
     this.cloud.delete(idx);
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "sprite-extend-proton",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Proton particle renderer for spritejs",
   "main": "lib/index.js",
   "scripts": {
