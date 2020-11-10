@@ -16,8 +16,8 @@ function setCloudPartice(idx, cloud, particle) {
   if(particle.radius && bodyRadius) {
     scale *= particle.radius / bodyRadius;
   }
-  cloud.scale(idx, [scale, scale], [particle.p.x, particle.p.y]);
-  cloud.rotate(idx, particle.rotation, [particle.p.x, particle.p.y]);
+  cloud.scale(idx, [scale, scale]);
+  cloud.rotate(idx, particle.rotation);
 }
 
 export default class Render extends CustomRenderer {
